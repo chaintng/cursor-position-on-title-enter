@@ -41,7 +41,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            console.log("Checking version: " + process.env.STATE_version);
+            console.log("Checking version: " + process.env);
             try {
               const { data: releases } = await github.rest.repos.getReleaseByTag({
                 owner: context.repo.owner,
