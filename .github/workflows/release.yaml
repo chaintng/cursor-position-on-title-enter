@@ -34,21 +34,24 @@ jobs:
         run: |
           version=$(jq -r '.version' manifest.json)
           echo "Version found: $version"
-          echo "version=$version" >> $GITHUB_STATE
+          echo "manifest_version=$version" >> $GITHUB_STATE
+          echo 
 
       - name: Check if version exists
         id: check_version
         uses: actions/github-script@v7
         with:
           script: |
-            console.log("Checking version: " + process.env);
+            console.log("Checking version: " + process.env.STATE_manifest_version);
+            console.log("STATE: " + process.env.GITHUB_STATE);
+            console.log("STATE: " + process.env.STATE["manifest_version"]);
             try {
               const { data: releases } = await github.rest.repos.getReleaseByTag({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                tag: process.env.STATE_version
+                tag: process.env.STATE_manifest_version
               });
-              const exists = releases.tag_name === process.env.STATE_version;
+              const exists = releases.tag_name === process.env.STATE_manifest_version;
               console.log(`Version exists: ${exists}`);
               core.setOutput("version_exists", exists);
             } catch (error) {
@@ -87,8 +90,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ env.STATE_version }}
-          release_name: Release ${{ env.STATE_version }}
+          tag_name: ${{ env.STATE_manifest_version }}
+          release_name: Release ${{ env.STATE_manifest_version }}
           draft: false
           prerelease: false
 
