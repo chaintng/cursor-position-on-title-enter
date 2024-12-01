@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - master
 
 jobs:
   release:
@@ -37,10 +38,11 @@ jobs:
         id: check_permissions
         run: |
           PERMISSIONS=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/actions/permissions)
+          echo $PERMISSIONS
           if [[ $PERMISSIONS != *"create_release"* ]]; then
             echo -e "\033[0;31mError: GITHUB_TOKEN does not have create_release permission\033[0m"
-            echo -e "\033[0;31mSOLUTION: Please Enter https://github.com/${{ github.repository }}/settings/actions and update \"Workflow permissions\"\033[0m"
-            echo -e "\033[0;31mto \"Read and write permission\" for \"Read and write permissions\"\033[0m"
+            echo -e "\033[0;31mSOLUTION: Please Enter https://github.com/${{ github.repository }}/settings/actions\033[0m"
+            echo -e "\033[0;31mand update \"Workflow permissions\" to \"Read and write permission\"\033[0m"
             exit 1
           fi
 
