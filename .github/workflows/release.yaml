@@ -52,7 +52,7 @@ jobs:
               core.setOutput("version_exists", exists);
             } catch (error) {
               if (error.status === 404) {
-                console.log('Version does not exist.');
+                console.log('Release does not exist.');
                 core.setOutput("version_exists", false);
               } else {
                 throw error;
