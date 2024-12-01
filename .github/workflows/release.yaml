@@ -87,7 +87,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: $STATE_version
-          release_name: Release $STATE_version
+          release_name: Release ${{ env.STATE_version }}
           draft: false
           prerelease: false
 
