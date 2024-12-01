@@ -36,18 +36,6 @@ jobs:
           echo "Version found: $version"
           echo "##[set-output name=version;]$version"
 
-      - name: Create GitHub Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.get_version.outputs.version }}
-          release_name: Release ${{ steps.get_version.outputs.version }}
-          draft: false
-          prerelease: false
-
-
       - name: Check if version exists
         id: check_version
         uses: actions/github-script@v6
@@ -87,7 +75,20 @@ jobs:
           echo -e "\e[32mRelease will cbe created in new workflow\e[0m"
           exit 1
 
+      - name: Create GitHub Release
+        id: create_release
+        if: ${{ steps.check_version.outputs.version_exists != 'true' }}
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.get_version.outputs.version }}
+          release_name: Release ${{ steps.get_version.outputs.version }}
+          draft: false
+          prerelease: false
+
       - name: Upload Release Assets
+        if: ${{ steps.check_version.outputs.version_exists != 'true' }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -98,6 +99,7 @@ jobs:
           asset_content_type: application/javascript
 
       - name: Upload manifest.json
+        if: ${{ steps.check_version.outputs.version_exists != 'true' }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
