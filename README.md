@@ -11,12 +11,6 @@ This is a simple Obsidian plugin that lets you set the cursor position after pre
   - Beginning of Note
   - Last Line of Note
 
-## Installation
-
-1. Download the latest release from the [Releases](https://github.com/chaintng/cursor-position-on-title-enter/releases) page.
-2. Extract the files to your Obsidian plugins folder.
-3. Enable the plugin in Obsidian settings.
-
 ## Usage
 
 1. Go to the plugin settings.
