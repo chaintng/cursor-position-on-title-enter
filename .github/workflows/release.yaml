@@ -47,6 +47,7 @@ jobs:
               tag: "${{ steps.get_version.outputs.version }}"
             });
             const exists = releases.tag_name === "${{ steps.get_version.outputs.version }}";
+            console.log(`Version exists: ${exists}`);
             core.setOutput("version_exists", exists);
 
       - name: Bump version if exists
@@ -65,9 +66,8 @@ jobs:
           git add manifest.json
           git commit -m "Bump version to $new_version"
           git push
-          echo "##[set-output name=version;]$new_version"
-
-          echo "::set-env name=VERSION::$new_version"
+          echo "version=$new_version" >> $GITHUB_STATE
+          
           echo -e "\e[32mVersion bumped to $new_version\e[0m"
           echo -e "\e[32mRelease will cbe created in new workflow\e[0m"
           exit 1
