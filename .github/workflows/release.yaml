@@ -47,6 +47,46 @@ jobs:
           draft: false
           prerelease: false
 
+
+      - name: Check if version exists
+        id: check_version
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { data: releases } = await github.repos.listReleases({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+            const version = process.env.VERSION;
+            const exists = releases.some(release => release.tag_name === version);
+            core.setOutput("version_exists", exists);
+
+          env:
+            VERSION: ${{ steps.get_version.outputs.version }}
+
+      - name: Bump version if exists
+        if: ${{ steps.check_version.outputs.version_exists == 'true' }}
+        run: |
+          version=$(jq -r '.version' manifest.json)
+          IFS='.' read -ra parts <<< "$version"
+          parts[-1]=$((parts[-1] + 1))
+          new_version="${parts[*]}"
+          new_version=${new_version// /.}
+          echo "New version: $new_version"
+          jq ".version = \"$new_version\"" manifest.json > tmp_manifest.json
+          mv tmp_manifest.json manifest.json
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add manifest.json
+          git commit -m "Bump version to $new_version"
+          git push
+          echo "##[set-output name=version;]$new_version"
+
+          echo "::set-env name=VERSION::$new_version"
+          echo -e "\e[32mVersion bumped to $new_version\e[0m"
+          echo -e "\e[32mRelease will cbe created in new workflow\e[0m"
+          exit 1
+
       - name: Upload Release Assets
         uses: actions/upload-release-asset@v1
         env:
