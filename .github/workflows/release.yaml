@@ -45,12 +45,9 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
             });
-            const version = process.env.VERSION;
+            const version = "${{ steps.get_version.outputs.version }}";
             const exists = releases.some(release => release.tag_name === version);
             core.setOutput("version_exists", exists);
-
-          env:
-            VERSION: ${{ steps.get_version.outputs.version }}
 
       - name: Bump version if exists
         if: ${{ steps.check_version.outputs.version_exists == 'true' }}
