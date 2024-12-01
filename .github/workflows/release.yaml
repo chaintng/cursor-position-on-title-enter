@@ -41,14 +41,23 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const { data: releases } = await github.rest.repos.getReleaseByTag({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              tag: "${{ steps.get_version.outputs.version }}"
-            });
-            const exists = releases.tag_name === "${{ steps.get_version.outputs.version }}";
-            console.log(`Version exists: ${exists}`);
-            core.setOutput("version_exists", exists);
+            try {
+              const { data: releases } = await github.rest.repos.getReleaseByTag({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                tag: "${{ steps.get_version.outputs.version }}"
+              });
+              const exists = releases.tag_name === "${{ steps.get_version.outputs.version }}";
+              console.log(`Version exists: ${exists}`);
+              core.setOutput("version_exists", exists);
+            } catch (error) {
+              if (error.status === 404) {
+                console.log('Version does not exist.');
+                core.setOutput("version_exists", false);
+              } else {
+                throw error;
+              }
+            }
 
       - name: Bump version if exists
         if: ${{ steps.check_version.outputs.version_exists == 'true' }}
@@ -67,9 +76,9 @@ jobs:
           git commit -m "Bump version to $new_version"
           git push
           echo "version=$new_version" >> $GITHUB_STATE
-          
+
           echo -e "\e[32mVersion bumped to $new_version\e[0m"
-          echo -e "\e[32mRelease will cbe created in new workflow\e[0m"
+          echo -e "\e[32mRelease will be created in new workflow\e[0m"
           exit 1
 
       - name: Create GitHub Release
