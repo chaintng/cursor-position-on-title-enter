@@ -64,11 +64,9 @@ class CursorPositionSettingTab extends PluginSettingTab {
     const { containerEl } = this;
     containerEl.empty();
 
-    containerEl.createEl("h2", { text: "Cursor Position Settings" });
-
     // Setting: Cursor Position
     new Setting(containerEl)
-      .setName("Cursor Position on Title Enter")
+      .setName("Cursor position on title enter")
       .setDesc(
         "Choose the cursor behavior when when press enter on note title."
       )
