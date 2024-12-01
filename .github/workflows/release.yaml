@@ -44,9 +44,19 @@ jobs:
           draft: false
           prerelease: false
 
-      ## REQUIRE: Enter Repo Settings > Actions and update "Workflow permissions" 
-      ## to "Read and write permission" for "Actions, Packages, and Repository projects"
+      - name: Check GITHUB_TOKEN permissions
+        id: check_permissions
+        run: |
+          PERMISSIONS=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/actions/permissions)
+          if [[ $PERMISSIONS != *"create_release"* ]]; then
+            echo -e "\033[0;31mError: GITHUB_TOKEN does not have create_release permission\033[0m"
+            echo -e "\033[0;31mSOLUTION: Please Enter Repo Settings > Actions and update \"Workflow permissions\"\033[0m"
+            echo -e "\033[0;31mto \"Read and write permission\" for \"Read and write permissions\"\033[0m"
+            exit 1
+          fi
+
       - name: Upload Release Assets
+        if: steps.check_permissions.outputs.success == 'true'
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -57,6 +67,7 @@ jobs:
           asset_content_type: application/javascript
 
       - name: Upload manifest.json
+        if: steps.check_permissions.outputs.success == 'true'
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
