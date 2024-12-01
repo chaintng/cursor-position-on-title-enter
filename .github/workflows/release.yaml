@@ -19,9 +19,12 @@ jobs:
         node-version: '20'
 
     - name: Install dependencies
+      if: ${{ hashFiles('package.json') != '' }}
+      if: exists('package.json')
       run: npm install
 
     - name: Build the plugin
+      if: ${{ hashFiles('package.json') != '' }}
       run: npm run build
 
     - name: Extract version from manifest.json
