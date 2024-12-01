@@ -35,7 +35,6 @@ jobs:
           version=$(jq -r '.version' manifest.json)
           echo "Version found: $version"
           echo "manifest_version=$version" >> $GITHUB_ENV
-          echo 
 
       - name: Check if version exists
         id: check_version
