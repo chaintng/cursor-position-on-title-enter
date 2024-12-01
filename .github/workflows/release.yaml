@@ -41,12 +41,12 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const { data: releases } = await github.repos.listReleases({
+            const { data: releases } = await github.repos.getReleaseByTag({
               owner: context.repo.owner,
               repo: context.repo.repo,
+              tag: "${{ steps.get_version.outputs.version }}"
             });
-            const version = "${{ steps.get_version.outputs.version }}";
-            const exists = releases.some(release => release.tag_name === version);
+            const exists = releases.tag_name === "${{ steps.get_version.outputs.version }}";
             core.setOutput("version_exists", exists);
 
       - name: Bump version if exists
