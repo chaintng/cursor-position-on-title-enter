@@ -19,7 +19,7 @@ This is a simple Obsidian plugin that lets you set the cursor position after pre
 
 ## Author
 
-Created by [Por Chainarong T.](https://github.com/chaintng)
+Created by [Por Chainarong Tangsurakit](https://github.com/chaintng)
 
 ## License
 
