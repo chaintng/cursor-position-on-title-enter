@@ -68,9 +68,12 @@ jobs:
           parts[-1]=$((parts[-1] + 1))
           new_version="${parts[*]}"
           new_version=${new_version// /.}
-          echo "New version: $new_version"
+          echo "New version in manifest.json: $new_version"
           jq ".version = \"$new_version\"" manifest.json > tmp_manifest.json
           mv tmp_manifest.json manifest.json
+          echo "New version in package.json: $new_version"
+          jq ".version = \"$new_version\"" package.json > tmp_package.json
+          mv tmp_package.json package.json
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git add manifest.json

@@ -1,6 +1,17 @@
-const { Plugin, PluginSettingTab, Setting } = require("obsidian");
 
-module.exports = class CursorPositionPlugin extends Plugin {
+import { Plugin, PluginSettingTab, Setting, App, TFile } from "obsidian";
+
+interface CursorPositionPluginSettings {
+  cursorPosition: string;
+}
+
+const DEFAULT_SETTINGS: CursorPositionPluginSettings = {
+  cursorPosition: "default",
+};
+
+export default class CursorPositionPlugin extends Plugin {
+  settings: CursorPositionPluginSettings;
+
   async onload() {
     console.log("Cursor Position Plugin Loaded");
     await this.loadSettings();
@@ -9,19 +20,19 @@ module.exports = class CursorPositionPlugin extends Plugin {
     this.addSettingTab(new CursorPositionSettingTab(this.app, this));
 
     // Register observer for detecting Enter key on title
-    this.registerDomEvent(document, "keydown", (event) => {
+    this.registerDomEvent(document, "keydown", (event: KeyboardEvent) => {
       if (event.key === "Enter") {
         const activeLeaf = this.app.workspace.activeLeaf;
 
         // Check if focus is on the note title input
-        if (event.srcElement.classList.contains("inline-title")) {
+        if (event.srcElement instanceof HTMLElement && event.srcElement.classList.contains("inline-title")) {
           this.handleTitleEnter(activeLeaf);
         }
       }
     });
   }
 
-  async handleTitleEnter(activeLeaf) {
+  async handleTitleEnter(activeLeaf: any) {
     if (!activeLeaf) return;
 
     const editor = activeLeaf.view.sourceMode?.cmEditor;
@@ -37,25 +48,24 @@ module.exports = class CursorPositionPlugin extends Plugin {
     }
     // Default behavior: do nothing
   }
-  
+
   onunload() {
     console.log("Cursor Position Plugin Unloaded");
   }
 
   async loadSettings() {
-    this.settings = Object.assign(
-      { cursorPosition: "default" },
-      await this.loadData()
-    );
+    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
   }
 
   async saveSettings() {
     await this.saveData(this.settings);
   }
-};
+}
 
 class CursorPositionSettingTab extends PluginSettingTab {
-  constructor(app, plugin) {
+  plugin: CursorPositionPlugin;
+
+  constructor(app: App, plugin: CursorPositionPlugin) {
     super(app, plugin);
     this.plugin = plugin;
   }
@@ -67,9 +77,7 @@ class CursorPositionSettingTab extends PluginSettingTab {
     // Setting: Cursor Position
     new Setting(containerEl)
       .setName("Cursor position on title enter")
-      .setDesc(
-        "Choose the cursor behavior when when press enter on note title."
-      )
+      .setDesc("Choose the cursor behavior when when press enter on note title.")
       .addDropdown((dropdown) =>
         dropdown
           .addOption("default", "Last Known Cursor (Default)")
