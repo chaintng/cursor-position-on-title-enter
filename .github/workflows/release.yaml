@@ -76,7 +76,7 @@ jobs:
           mv tmp_package.json package.json
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          git add manifest.json
+          git add manifest.json package.json
           git commit -m "Bump version to $new_version"
           git push
           echo "manifest_version=$new_version" >> $GITHUB_ENV
