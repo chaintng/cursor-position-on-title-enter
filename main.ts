@@ -13,7 +13,6 @@ export default class CursorPositionPlugin extends Plugin {
   settings: CursorPositionPluginSettings;
 
   async onload() {
-    console.log("Cursor Position Plugin Loaded");
     await this.loadSettings();
 
     // Add plugin settings
@@ -47,10 +46,6 @@ export default class CursorPositionPlugin extends Plugin {
       editor.setCursor(lastLine, editor.getLine(lastLine).length);
     }
     // Default behavior: do nothing
-  }
-
-  onunload() {
-    console.log("Cursor Position Plugin Unloaded");
   }
 
   async loadSettings() {
