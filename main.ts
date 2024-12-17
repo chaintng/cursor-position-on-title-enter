@@ -21,20 +21,20 @@ export default class CursorPositionPlugin extends Plugin {
     // Register observer for detecting Enter key on title
     this.registerDomEvent(document, "keydown", (event: KeyboardEvent) => {
       if (event.key === "Enter") {
-        const activeLeaf = this.app.workspace.activeLeaf;
+        const activeEditor = this.app.workspace.activeEditor;
 
         // Check if focus is on the note title input
-        if (event.srcElement instanceof HTMLElement && event.srcElement.classList.contains("inline-title")) {
-          this.handleTitleEnter(activeLeaf);
+        if (event.target instanceof HTMLElement && event.target.classList.contains("inline-title")) {
+          this.handleTitleEnter(activeEditor);
         }
       }
     });
   }
 
-  async handleTitleEnter(activeLeaf: any) {
-    if (!activeLeaf) return;
+  async handleTitleEnter(activeEditor: any) {
+    if (!activeEditor) return;
 
-    const editor = activeLeaf.view.sourceMode?.cmEditor;
+    const editor = activeEditor.sourceMode?.cmEditor;
     if (!editor) return;
 
     const cursorSetting = this.settings.cursorPosition || "default";
@@ -75,9 +75,9 @@ class CursorPositionSettingTab extends PluginSettingTab {
       .setDesc("Choose the cursor behavior when when press enter on note title.")
       .addDropdown((dropdown) =>
         dropdown
-          .addOption("default", "Last Known Cursor (Default)")
-          .addOption("beginning", "Beginning of Note")
-          .addOption("end", "Last Line of Note")
+          .addOption("default", "Last known cursor (default)")
+          .addOption("beginning", "Beginning of note")
+          .addOption("end", "Last line of note")
           .setValue(this.plugin.settings.cursorPosition)
           .onChange(async (value) => {
             this.plugin.settings.cursorPosition = value;

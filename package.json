@@ -1,7 +1,7 @@
 {
   "name": "cursor-position-on-title-enter",
   "version": "1.0.2",
-  "description": "A plugin to set the cursor position after pressing Enter on the note title.",
+  "description": "Set the cursor position after pressing Enter on the note title.",
   "main": "main.js",
   "scripts": {
     "dev": "node esbuild.config.mjs",
