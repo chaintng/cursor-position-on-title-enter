@@ -1,6 +1,6 @@
 {
   "name": "cursor-position-on-title-enter",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Set the cursor position after pressing Enter on the note title.",
   "main": "main.js",
   "scripts": {
