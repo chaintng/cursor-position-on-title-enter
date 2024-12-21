@@ -1,5 +1,4 @@
-
-import { Plugin, PluginSettingTab, Setting, App, TFile } from "obsidian";
+import { Plugin, PluginSettingTab, Setting, App, MarkdownFileInfo } from "obsidian";
 
 interface CursorPositionPluginSettings {
   cursorPosition: string;
@@ -8,6 +7,8 @@ interface CursorPositionPluginSettings {
 const DEFAULT_SETTINGS: CursorPositionPluginSettings = {
   cursorPosition: "default",
 };
+
+const FIND_INDEX_AFTER_3RD_CHARACTERS: number = 3;
 
 export default class CursorPositionPlugin extends Plugin {
   settings: CursorPositionPluginSettings;
@@ -25,22 +26,29 @@ export default class CursorPositionPlugin extends Plugin {
 
         // Check if focus is on the note title input
         if (event.target instanceof HTMLElement && event.target.classList.contains("inline-title")) {
+          if (!activeEditor) return;
           this.handleTitleEnter(activeEditor);
         }
       }
     });
   }
 
-  async handleTitleEnter(activeEditor: any) {
-    if (!activeEditor) return;
-
-    const editor = activeEditor.sourceMode?.cmEditor;
+  async handleTitleEnter(activeEditor: MarkdownFileInfo) {
+    const editor = activeEditor.editor;
     if (!editor) return;
 
     const cursorSetting = this.settings.cursorPosition || "default";
 
     if (cursorSetting === "beginning") {
-      editor.setCursor(0, 0);
+      const content = editor.getValue();
+      const frontmatterEnd = content.indexOf('---', FIND_INDEX_AFTER_3RD_CHARACTERS); // Find the end of the frontmatter section
+
+      if (frontmatterEnd !== -1) {
+        const nextLine = editor.offsetToPos(frontmatterEnd + 3).line + 1;
+        editor.setCursor(nextLine, 0);
+      } else {
+        editor.setCursor(0, 0); // Fallback to beginning if no frontmatter found
+      }
     } else if (cursorSetting === "end") {
       const lastLine = editor.lastLine();
       editor.setCursor(lastLine, editor.getLine(lastLine).length);
