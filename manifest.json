@@ -3,7 +3,7 @@
   "name": "Cursor Position on Title Enter",
   "version": "1.0.4",
   "minAppVersion": "1.0.0",
-  "description": "A plugin to set the cursor position after pressing Enter on the note title.",
+  "description": "Set the cursor position after pressing Enter on the note title.",
   "author": "Por Chainarong Tangsurakit",
   "authorUrl": "https://github.com/chaintng",
   "isDesktopOnly": false
